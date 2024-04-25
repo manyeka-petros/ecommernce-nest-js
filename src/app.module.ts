@@ -9,6 +9,18 @@ import { CustomerModule } from './customer/customer.module';
 import { ImagesproductModule } from './imagesproduct/imagesproduct.module';
 import { ImagesproductController } from './imagesproduct/imagesproduct.controller';
 import { ImagesproductService } from './imagesproduct/imagesproduct.service';
+import { CategoryController } from './category/category.controller';
+import { CategoryService } from './category/category.service';
+import { CategoryModule } from './category/category.module';
+import { ProductController } from './product/product.controller';
+import { ProductService } from './product/product.service';
+import { ProductModule } from './product/product.module';
+import { WishListController } from './wish-list/wish-list.controller';
+import { WishListService } from './wish-list/wish-list.service';
+import { WishListModule } from './wish-list/wish-list.module';
+import { UserController } from './user/user.controller';
+import { UserService } from './user/user.service';
+import { UserModule } from './user/user.module';
 
 
 @Module({
@@ -30,9 +42,13 @@ import { ImagesproductService } from './imagesproduct/imagesproduct.service';
     }),
     CustomerModule,
     ImagesproductModule,
+    CategoryModule,
+    ProductModule,
+    WishListModule,
+    UserModule,
     
   ],
-  controllers: [AppController, CustomerController,ImagesproductController],
-  providers: [AppService, CustomerService,ImagesproductService ],
+  controllers: [AppController, CustomerController,ImagesproductController, CategoryController, ProductController, WishListController, UserController],
+  providers: [AppService, CustomerService,ImagesproductService, CategoryService, ProductService, WishListService, UserService ],
 })
 export class AppModule {}
