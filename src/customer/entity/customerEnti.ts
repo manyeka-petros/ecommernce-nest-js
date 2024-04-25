@@ -1,39 +1,26 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity()
-export class CustomerEntity{
-    @PrimaryGeneratedColumn({
-        type : 'bigint'
-    })
-    id : number;
-    @Column({
-        nullable:false,
-        default:''
-    })
-    first_name : string
-    @Column({
-        nullable:false,
-        default:''
-    })
-    last_name : string
-    @Column({
-        nullable:false,
-        default:''
-    })
-    email : string
-    @Column({
-        nullable:false,
-        default:''
-    })
-    phone_number : string
+@Entity('users')
+export class User {
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @Column({
-        nullable:false,
-        default:''
-    })
-    password : string
+    @Column({ name: 'first_name' })
+    firstName: string;
 
+    @Column({ name: 'last_name' })
+    lastName: string;
 
+    @Column()
+    email: string;
 
+    @Column()
+    password: string;
 
+    constructor(firstName: string, lastName: string, email: string, password: string) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+    }
 }
