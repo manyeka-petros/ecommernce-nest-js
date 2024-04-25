@@ -18,6 +18,18 @@ const customer_module_1 = require("./customer/customer.module");
 const imagesproduct_module_1 = require("./imagesproduct/imagesproduct.module");
 const imagesproduct_controller_1 = require("./imagesproduct/imagesproduct.controller");
 const imagesproduct_service_1 = require("./imagesproduct/imagesproduct.service");
+const category_controller_1 = require("./category/category.controller");
+const category_service_1 = require("./category/category.service");
+const category_module_1 = require("./category/category.module");
+const product_controller_1 = require("./product/product.controller");
+const product_service_1 = require("./product/product.service");
+const product_module_1 = require("./product/product.module");
+const wish_list_controller_1 = require("./wish-list/wish-list.controller");
+const wish_list_service_1 = require("./wish-list/wish-list.service");
+const wish_list_module_1 = require("./wish-list/wish-list.module");
+const user_controller_1 = require("./user/user.controller");
+const user_service_1 = require("./user/user.service");
+const user_module_1 = require("./user/user.module");
 let AppModule = exports.AppModule = class AppModule {
 };
 exports.AppModule = AppModule = __decorate([
@@ -40,9 +52,13 @@ exports.AppModule = AppModule = __decorate([
             }),
             customer_module_1.CustomerModule,
             imagesproduct_module_1.ImagesproductModule,
+            category_module_1.CategoryModule,
+            product_module_1.ProductModule,
+            wish_list_module_1.WishListModule,
+            user_module_1.UserModule,
         ],
-        controllers: [app_controller_1.AppController, customer_controller_1.CustomerController, imagesproduct_controller_1.ImagesproductController],
-        providers: [app_service_1.AppService, customer_service_1.CustomerService, imagesproduct_service_1.ImagesproductService],
+        controllers: [app_controller_1.AppController, customer_controller_1.CustomerController, imagesproduct_controller_1.ImagesproductController, category_controller_1.CategoryController, product_controller_1.ProductController, wish_list_controller_1.WishListController, user_controller_1.UserController],
+        providers: [app_service_1.AppService, customer_service_1.CustomerService, imagesproduct_service_1.ImagesproductService, category_service_1.CategoryService, product_service_1.ProductService, wish_list_service_1.WishListService, user_service_1.UserService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
