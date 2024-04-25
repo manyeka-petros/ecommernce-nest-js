@@ -21,6 +21,9 @@ import { WishListModule } from './wish-list/wish-list.module';
 import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
+import { AuthenticationTokenController } from './authentication-token/authentication-token.controller';
+import { AuthenticationTokenService } from './authentication-token/authentication-token.service';
+import { AuthenticationTokenModule } from './authentication-token/authentication-token.module';
 
 
 @Module({
@@ -46,9 +49,10 @@ import { UserModule } from './user/user.module';
     ProductModule,
     WishListModule,
     UserModule,
+    AuthenticationTokenModule,
     
   ],
-  controllers: [AppController, CustomerController,ImagesproductController, CategoryController, ProductController, WishListController, UserController],
-  providers: [AppService, CustomerService,ImagesproductService, CategoryService, ProductService, WishListService, UserService ],
+  controllers: [AppController, CustomerController,ImagesproductController, CategoryController, ProductController, WishListController, UserController, AuthenticationTokenController],
+  providers: [AppService, CustomerService,ImagesproductService, CategoryService, ProductService, WishListService, UserService, AuthenticationTokenService ],
 })
 export class AppModule {}

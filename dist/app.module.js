@@ -30,6 +30,9 @@ const wish_list_module_1 = require("./wish-list/wish-list.module");
 const user_controller_1 = require("./user/user.controller");
 const user_service_1 = require("./user/user.service");
 const user_module_1 = require("./user/user.module");
+const authentication_token_controller_1 = require("./authentication-token/authentication-token.controller");
+const authentication_token_service_1 = require("./authentication-token/authentication-token.service");
+const authentication_token_module_1 = require("./authentication-token/authentication-token.module");
 let AppModule = exports.AppModule = class AppModule {
 };
 exports.AppModule = AppModule = __decorate([
@@ -56,9 +59,10 @@ exports.AppModule = AppModule = __decorate([
             product_module_1.ProductModule,
             wish_list_module_1.WishListModule,
             user_module_1.UserModule,
+            authentication_token_module_1.AuthenticationTokenModule,
         ],
-        controllers: [app_controller_1.AppController, customer_controller_1.CustomerController, imagesproduct_controller_1.ImagesproductController, category_controller_1.CategoryController, product_controller_1.ProductController, wish_list_controller_1.WishListController, user_controller_1.UserController],
-        providers: [app_service_1.AppService, customer_service_1.CustomerService, imagesproduct_service_1.ImagesproductService, category_service_1.CategoryService, product_service_1.ProductService, wish_list_service_1.WishListService, user_service_1.UserService],
+        controllers: [app_controller_1.AppController, customer_controller_1.CustomerController, imagesproduct_controller_1.ImagesproductController, category_controller_1.CategoryController, product_controller_1.ProductController, wish_list_controller_1.WishListController, user_controller_1.UserController, authentication_token_controller_1.AuthenticationTokenController],
+        providers: [app_service_1.AppService, customer_service_1.CustomerService, imagesproduct_service_1.ImagesproductService, category_service_1.CategoryService, product_service_1.ProductService, wish_list_service_1.WishListService, user_service_1.UserService, authentication_token_service_1.AuthenticationTokenService],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map
