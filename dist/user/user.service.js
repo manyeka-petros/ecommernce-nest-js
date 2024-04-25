@@ -8,11 +8,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b;
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const userEntity_1 = require("./userEntity");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const authentication_token_service_1 = require("../authentication-token/authentication-token.service");
+const authenticationTokenEntity_1 = require("../authentication-token/authenticationTokenEntity");
 let UserService = exports.UserService = class UserService {
     constructor(userRepository, authenticationService) {
         this.userRepository = userRepository;
@@ -26,7 +32,7 @@ let UserService = exports.UserService = class UserService {
         const encryptedPassword = this.hashPassword(signupDto.password);
         const user = new userEntity_1.User(signupDto.firstName, signupDto.lastName, signupDto.email, encryptedPassword);
         await this.userRepository.save(user);
-        const authenticationToken = new AuthenticationToken(user);
+        const authenticationToken = new authenticationTokenEntity_1.AuthenticationToken(user);
         await this.authenticationService.saveConfirmationToken(authenticationToken);
         return { status: 'success', message: 'User created successfully' };
     }
@@ -50,6 +56,8 @@ let UserService = exports.UserService = class UserService {
 };
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [typeof (_a = typeof Repository !== "undefined" && Repository) === "function" ? _a : Object, typeof (_b = typeof AuthenticationService !== "undefined" && AuthenticationService) === "function" ? _b : Object])
+    __param(0, (0, typeorm_1.InjectRepository)(userEntity_1.User)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        authentication_token_service_1.AuthenticationTokenService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map
