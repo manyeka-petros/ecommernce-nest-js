@@ -11,53 +11,50 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
-const userEntity_1 = require("./userEntity");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-const authentication_token_service_1 = require("../authentication-token/authentication-token.service");
-const authenticationTokenEntity_1 = require("../authentication-token/authenticationTokenEntity");
+const userEntity_1 = require("./userEntity");
+const bcrypt = require("bcrypt");
+const signInResponseDto_1 = require("./signInResponseDto");
+const authenticationFailException_1 = require("../exception/authenticationFailException");
+const customException_1 = require("../exception/customException");
+const responseDto_1 = require("./responseDto");
 let UserService = exports.UserService = class UserService {
-    constructor(userRepository, authenticationService) {
+    constructor(userRepository, authService) {
         this.userRepository = userRepository;
-        this.authenticationService = authenticationService;
+        this.authService = authService;
     }
     async signUp(signupDto) {
-        const existingUser = await this.userRepository.findByEmail(signupDto.email);
+        const existingUser = await this.userRepository.findOne({ email: signupDto.email });
         if (existingUser) {
-            throw new Error('User already exists');
+            throw new customException_1.CustomException('user already present');
         }
-        const encryptedPassword = this.hashPassword(signupDto.password);
-        const user = new userEntity_1.User(signupDto.firstName, signupDto.lastName, signupDto.email, encryptedPassword);
+        const hashedPassword = await bcrypt.hash(signupDto.password, 10);
+        const user = new userEntity_1.User(signupDto.firstName, signupDto.lastName, signupDto.email, hashedPassword);
         await this.userRepository.save(user);
-        const authenticationToken = new authenticationTokenEntity_1.AuthenticationToken(user);
-        await this.authenticationService.saveConfirmationToken(authenticationToken);
-        return { status: 'success', message: 'User created successfully' };
-    }
-    hashPassword(password) {
+        await this.authService.sendConfirmationEmail(user);
+        return new responseDto_1.ResponseDto('success', 'user created successfully');
     }
     async signIn(signInDto) {
-        const user = await this.userRepository.findByEmail(signInDto.email);
+        const user = await this.userRepository.findOne({ email: signInDto.email });
         if (!user) {
-            throw new Error('User not found');
+            throw new authenticationFailException_1.AuthenticationFailException('user is not valid');
         }
-        const hashedPassword = this.hashPassword(signInDto.password);
-        if (user.password !== hashedPassword) {
-            throw new Error('Incorrect password');
+        const isPasswordMatch = await bcrypt.compare(signInDto.password, user.password);
+        if (!isPasswordMatch) {
+            throw new authenticationFailException_1.AuthenticationFailException('wrong password');
         }
-        const token = await this.authenticationService.getToken(user);
-        if (!token) {
-            throw new Error('Token not found');
-        }
-        return { status: 'success', token: token.token };
+        const token = await this.authService.generateToken(user);
+        return new signInResponseDto_1.SignInResponseDto('success', token);
     }
 };
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(userEntity_1.User)),
-    __metadata("design:paramtypes", [typeorm_2.Repository,
-        authentication_token_service_1.AuthenticationTokenService])
+    __metadata("design:paramtypes", [typeorm_2.Repository, typeof (_a = typeof AuthenticationTokenService !== "undefined" && AuthenticationTokenService) === "function" ? _a : Object])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

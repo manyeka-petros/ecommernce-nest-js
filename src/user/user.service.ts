@@ -1,74 +1,50 @@
-import { Injectable } from '@nestjs/common';
-import { SignupDto } from './signUpDto';
-import { SignInResponseDto } from './signInResponseDto';
-import { User } from './userEntity';
-import { SignInDto } from './signInDto';
+import { Injectable, ResponseDecoratorOptions } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AuthenticationTokenService } from 'src/authentication-token/authentication-token.service';
-import { AuthenticationToken } from 'src/authentication-token/authenticationTokenEntity';
+import { User } from './userEntity';
 
+import { SignupDto } from './signUpDto';
+import { SignInDto } from './signInDto';
+import * as bcrypt from 'bcrypt';
+import { SignInResponseDto } from './signInResponseDto';
+import { AuthenticationFailException } from 'src/exception/authenticationFailException';
+import { CustomException } from 'src/exception/customException';
+import { ResponseDto } from './responseDto';
 @Injectable()
 export class UserService {
-    constructor(
-        @InjectRepository(User)
-        private  userRepository: Repository<User>,
-        private readonly authenticationService: AuthenticationTokenService,
-    ) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly authService: AuthenticationTokenService,
+  ) {}
 
-    async signUp(signupDto: SignupDto): Promise<SignInResponseDto> {
-        // check if user is already present
-        const existingUser = await this.userRepository.findByEmail(signupDto.email);
-        if (existingUser) {
-            throw new Error('User already exists');
-        }
-
-        // hash the password
-        const encryptedPassword = this.hashPassword(signupDto.password);
-
-        const user = new User(
-            signupDto.firstName,
-            signupDto.lastName,
-            signupDto.email,
-            encryptedPassword,
-        );
-
-        await this.userRepository.save(user);
-
-        // create the token
-        const authenticationToken = new AuthenticationToken(user);
-        await this.authenticationService.saveConfirmationToken(authenticationToken);
-
-        return { status: 'success', message: 'User created successfully' };
+  async signUp(signupDto: SignupDto): Promise<ResponseDto> {
+    const existingUser = await this.userRepository.findOne({ email: signupDto.email });
+    if (existingUser) {
+      throw new CustomException('user already present');
     }
 
-    private hashPassword(password: string): string {
-        // Implement your password hashing logic here
+    const hashedPassword = await bcrypt.hash(signupDto.password, 10); // Use bcrypt for secure hashing
+    const user = new User(signupDto.firstName, signupDto.lastName, signupDto.email, hashedPassword);
+
+    await this.userRepository.save(user);
+    await this.authService.sendConfirmationEmail(user); // Assuming sendConfirmationEmail exists in AuthService
+
+    return new ResponseDto('success', 'user created successfully');
+  }
+
+  async signIn(signInDto: SignInDto): Promise<SignInResponseDto> {
+    const user = await this.userRepository.findOne({ email: signInDto.email });
+    if (!user) {
+      throw new AuthenticationFailException('user is not valid');
     }
 
-    async signIn(signInDto: SignInDto): Promise <SignInResponseDto> {
-        // find user by email
-        const user = await this.userRepository.findByEmail(signInDto.email);
-        
-        if (!user) {
-            throw new Error('User not found');
-        }
-
-        // hash the password
-        const hashedPassword = this.hashPassword(signInDto.password);
-
-        // compare the password in DB
-        if (user.password !== hashedPassword) {
-            throw new Error('Incorrect password');
-        }
-
-        // retrieve the token
-        const token = await this.authenticationService.getToken(user);
-
-        if (!token) {
-            throw new Error('Token not found');
-        }
-
-        return { status: 'success', token: token.token };
+    const isPasswordMatch = await bcrypt.compare(signInDto.password, user.password); // Use bcrypt for comparison
+    if (!isPasswordMatch) {
+      throw new AuthenticationFailException('wrong password');
     }
+
+    const token = await this.authService.generateToken(user); // Assuming generateToken exists in AuthService
+    return new SignInResponseDto('success', token);
+  }
 }

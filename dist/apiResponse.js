@@ -8,26 +8,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserRepository = void 0;
+exports.ApiResponse = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
-const userEntity_1 = require("./userEntity");
-let UserRepository = exports.UserRepository = class UserRepository {
-    constructor(userRepository) {
-        this.userRepository = userRepository;
+let ApiResponse = exports.ApiResponse = class ApiResponse {
+    constructor(success, message) {
+        this.success = success;
+        this.message = message;
     }
-    async findByEmail(email) {
-        return this.userRepository.findOne({ where: { email } });
+    getTimestamp() {
+        return new Date().toISOString();
     }
 };
-exports.UserRepository = UserRepository = __decorate([
+exports.ApiResponse = ApiResponse = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(userEntity_1.User)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
-], UserRepository);
-//# sourceMappingURL=userRepository.js.map
+    __metadata("design:paramtypes", [Boolean, String])
+], ApiResponse);
+//# sourceMappingURL=apiResponse.js.map

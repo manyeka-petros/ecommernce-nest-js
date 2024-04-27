@@ -12,38 +12,39 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthenticationTokenService = void 0;
+exports.AuthenticationService = void 0;
 const common_1 = require("@nestjs/common");
-const authenticationTokenEntity_1 = require("./authenticationTokenEntity");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
-let AuthenticationTokenService = exports.AuthenticationTokenService = class AuthenticationTokenService {
+const authenticationTokenEntity_1 = require("./authenticationTokenEntity");
+const authenticationFailException_1 = require("../exception/authenticationFailException");
+let AuthenticationService = exports.AuthenticationService = class AuthenticationService {
     constructor(tokenRepository) {
         this.tokenRepository = tokenRepository;
     }
-    async saveConfirmationToken(authenticationToken) {
-        await this.tokenRepository.save(authenticationToken);
+    async saveConfirmationToken(token) {
+        await this.tokenRepository.save(token);
     }
     async getToken(user) {
-        return this.tokenRepository.findByUser(user);
+        return await this.tokenRepository.findOne({ where: user });
     }
     async getUser(token) {
-        const authenticationToken = await this.tokenRepository.findByToken(token);
-        return authenticationToken ? authenticationToken.user : null;
+        const authenticationToken = await this.tokenRepository.findOne({ where: { token } });
+        return authenticationToken?.user || null;
     }
     async authenticate(token) {
         if (!token) {
-            throw new Error('Token not present');
+            throw new authenticationFailException_1.AuthenticationFailException('token not present');
         }
         const user = await this.getUser(token);
         if (!user) {
-            throw new Error('Token not valid');
+            throw new authenticationFailException_1.AuthenticationFailException('token not valid');
         }
     }
 };
-exports.AuthenticationTokenService = AuthenticationTokenService = __decorate([
+exports.AuthenticationService = AuthenticationService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(authenticationTokenEntity_1.AuthenticationToken)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
-], AuthenticationTokenService);
+], AuthenticationService);
 //# sourceMappingURL=authentication-token.service.js.map
